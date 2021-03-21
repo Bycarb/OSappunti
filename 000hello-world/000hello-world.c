@@ -6,7 +6,7 @@
 #include "my_header.h"
 
 int main(int argc, char **argv) {
-	// Questa e` sparta! aaaaabbbbbbcccccc
+	// Questa e` sparta!
 	// printf è una funzione di GLIBC per produrre output formattato
 	printf("ciao!\nciao!\n");
 
