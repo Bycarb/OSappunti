@@ -75,6 +75,8 @@ void vettori(){
 	arr = malloc(dim_array * sizeof(int)); // alloco memoria heap per 1024 elementi
 	if(arr == NULL){perror("malloc error.\n"); exit(1);}
 
+	//malloc mantiene l'allocazione di memoria anche fuori dallo scopo attuale della variabile!
+
 	//Per inizializzare la memoria posso usare memset
 	//void *memset(void *s, int c, size_t n);
 	// inizializza i primi n caratteri della memoria s al valore c
