@@ -20,6 +20,10 @@ potreste usare le seguenti system call: open, read, write, close */
 
 
 int main(int argc, char * argv[]) {
+	if(argc != 3){
+		perror("Insuffiecient arguments.\n");
+		exit(EXIT_FAILURE);
+	}
 	char * sr = argv[1];
 	char * dst = argv[2];// puntatori ad argv per migliore leggibilita` del codice
 
@@ -32,7 +36,7 @@ int main(int argc, char * argv[]) {
 			exit(EXIT_FAILURE);
 		}
 	int fd_dst;
-	fd_dst = open(dst, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+	fd_dst = open(dst, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 	if( fd_dst == -1){
 		perror("Error opening destination file");
 		exit(EXIT_FAILURE);
