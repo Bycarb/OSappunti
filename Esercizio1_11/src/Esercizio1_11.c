@@ -66,7 +66,6 @@ void log_loadavg(int cycles, int time_interval, char *name){ // crea file di log
 			exit(EXIT_FAILURE);
 		}
 	free(buf);
-
 }
 
 void quicksort(double *a,int first,int last){
@@ -196,18 +195,10 @@ int main(int argc, char *argv[]) {
 					perror("error creating file.\n");
 					exit(EXIT_FAILURE);
 				}
-		//if(!flock(fd, LOCK_EX)){
-		//	perror("Error locking file\n");
-		//}
-
 		if (write(fd, buf, 10+1) < 1 ){
 			perror("Error writing result file\n");
 			exit(EXIT_FAILURE);
 		}
-
-		//if(!flock(fd, LOCK_UN)){
-		//	perror("Error unlocking file\n");
-		//}
 		if(close(fd)){
 			perror("Error closing file\n");
 		}
