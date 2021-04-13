@@ -5,7 +5,7 @@
 char* str_1 = "prima-";
 char* str_2 = "seconda-";
 char *str_3 = "terza!";
-
+//
 int main(void) {
 	char *str_new = calloc( ( strlen(str_1) + strlen(str_2) + strlen(str_3) + 1) , sizeof(char) ); // alloco memoria pari alla lunghezza dei 3 array + \0
 			if(str_new == NULL){
