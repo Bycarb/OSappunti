@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef char * my_string;
+
+char ** array_str;
+
+// oppure
+my_string * array_str2;
+
+/*
+come allocare un array di stringhe
+*/
+
+int main(void) { 
+
+  int dim_array = 10;
+
+  array_str = malloc(dim_array * sizeof(char *));
+  if (array_str == NULL) {
+    perror("malloc");
+    exit(1);
+  }
+
+  // inizializziamo l'array
+  for (int i = 0; i < dim_array; i++) {
+    array_str[i] = NULL;
+  }
+
+  array_str[0] = "ciao";
+
+  array_str[1] = "prova";
+
+  array_str[2] = "1234";
+  // ...
+
+  array_str[dim_array-1] = "ULTIMO!";
+
+
+  // aumentiamo la dimensione dell'array
+  dim_array = dim_array + 10;
+
+  array_str = realloc(array_str, dim_array * sizeof(char *));
+  if (array_str == NULL) {
+    perror("realloc");
+    exit(1);
+  }
+
+  // attenzione che le nuove celle dell'array non sono inizializzate....
+
+  for (int i = 10; i < dim_array; i++) {
+    array_str[i] = NULL;
+  }
+
+  array_str[dim_array-1] = "IL NUOVO ULTIMO!!!!";
+
+  //
+  for (int i = 0; i < dim_array; i++) {
+    printf("array_str[%d] = %s\n", i , array_str[i]);
+  }
+
+  return 0;
+}
+
+
+/*
+ * esempio che utilizza strtok() per suddividere una stringa di caratteri
+ * in blocchi di testo (token)
+ */
+
+int main () {
+
+   //char str[] = "hello world mi chiamo pino sono date delle stringhe";
+   char str[] = "prima seconda   terza quarta";
+   char s[] = " .,;"; // caratteri separatori da utilizzare per la suddivisione
+   char *token;
+
+   // ottieni il primo token
+   token = strtok(str, s);
+
+   // "cammina" attraverso gli altri token
+   while (token != NULL ) {
+      printf( "%s\n", token );
+
+      token = strtok(NULL, s); // le chiamate successive a strtok
+   }
+
+   return 0;
+}
+
+
+
+
