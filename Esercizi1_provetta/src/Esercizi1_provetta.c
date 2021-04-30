@@ -10,7 +10,6 @@
 #include <limits.h>
 #include <ctype.h>
 
-//Ho cercato di svolgere il punto 2 full, ma ho avuto problemi con l'input, quindi leggo da una stringa predefinita in maniera simile alla versione simple
 
 void process_line(char * line, char ** arr, int arr_len) {
 	arr[arr_len] = strcpy(arr[arr_len], line);
@@ -23,7 +22,7 @@ char ** read_lines_from_file(char * filename, int * arr_len) {
 
 	int arr_size = 0;
 	int alloc_size = 1;
-	char **arr = calloc(alloc_size, sizeof(char));
+	char **arr = calloc(alloc_size, sizeof(char*));
 		if( arr == NULL){
 			perror("calloc");
 			exit(1);
@@ -45,7 +44,7 @@ char ** read_lines_from_file(char * filename, int * arr_len) {
 		exit(1);
 	}
 
-	printf("reading file %s\n", filename);
+	//printf("reading file %s\n", filename);
 
 	while ((bytes_read = read(fd, buffer, buffer_size)) > 0) {
 
@@ -85,7 +84,7 @@ char ** read_lines_from_file(char * filename, int * arr_len) {
 		// per comodità di process_line, passiamo anche buffer_len
 		alloc_size += ( buffer_len + 1 );
 		arr[arr_size] = calloc(arr[arr_size], ( ( buffer_len + 1 ) * sizeof(char) ) );
-				if(arr == NULL){
+				if(arr[arr_size] == NULL){
 					perror("calloc");
 					exit(1);
 				}
@@ -114,6 +113,7 @@ char ** read_lines_from_file(char * filename, int * arr_len) {
 	return arr;
 }
 
+//legge da stdin e salva in una stringa
 char * read_words(){
 	int res;
 	int size = 256;
@@ -144,6 +144,7 @@ char * read_words(){
 	return str;
 }
 
+// stampa le parole di input che non sono presenti all'interno di dict
 void print_not_in_dictionary(char **input, char **dict, int input_len, int dict_len){
 	pid_t res;
 	int i = 0;
@@ -159,7 +160,7 @@ void print_not_in_dictionary(char **input, char **dict, int input_len, int dict_
 					}
 				}
 				if(!is_found){
-					printf("%s\n", input[i]);
+					printf("[Figlio, PID=%d]%s\n",getpid(), input[i]);
 				}
 				exit(0);
 				break;
@@ -174,19 +175,20 @@ void print_not_in_dictionary(char **input, char **dict, int input_len, int dict_
 	}
 }
 
+// restituisce l'array di parole all'interno di s_input e salva la lunghezza in elements
 char ** split_string(char s_input[], int *elements){
-	char * s = calloc(strlen(s_input), sizeof(char));
+	//stringa s temporanea, per non modificare la stringa di input
+	char * s = calloc(strlen(s_input), sizeof(char));   // s e` la stringa che poi segmentero` con strtok
+			if(s == NULL){
+				perror("Error with calloc\n");
+				exit(1);
+			}
 	int size =20;
 	s = strcpy(s, s_input);
 			if(s == NULL){
-				perror("Error copying with input string\n");
+				perror("Error copying input string\n");
 				return NULL;
 			}
-	char * newstring = calloc(strlen(s), sizeof(char));
-		if (newstring == NULL){
-			perror("Error allocating memory");
-			return NULL;
-		}
 	char *tmp;
 	char **arr_words = calloc (size, sizeof(char*));
 			if (arr_words == NULL){
@@ -196,7 +198,7 @@ char ** split_string(char s_input[], int *elements){
 
 	//splitto s nelle varie parole e
 	// memorizzo le posizioni di tutte le parole separate in un array
-	tmp = strtok(s, " ");
+	tmp = strtok(s, " \n");
 	arr_words[0] = tmp;
 	int i=1;
 	while( (tmp= strtok(NULL, " \n")) != NULL){
@@ -204,29 +206,28 @@ char ** split_string(char s_input[], int *elements){
 		i++;
 		if(i >= size){
 			size*=2;
-			arr_words = realloc (arr_words, size * sizeof(char));
+			arr_words = realloc (arr_words, size * sizeof(char*));
 				if(arr_words == NULL){
 					perror("realloc");
 					exit(1);
 				}
 		}
-
 	}
 	*elements = i;
 	return arr_words;
 }
 
 int main(void) {
-	char *dicname =  "/usr/share/dict/american-english";
-	int dict_len;
-	char **dict = read_lines_from_file(dicname, &dict_len);
-	int input_len;
-	char *input = read_words();
-	for(int i = 0; i< strlen(input); i++){
+	char *dicname =  "/usr/share/dict/american-english"; //path dizionario
+	int dict_len;   //numero di parole nel dizionario
+	char **dict = read_lines_from_file(dicname, &dict_len);   //carico nell'array dict tutte le parole del dizionario
+	int input_len;   //numero di parole nell'input
+	char *input = read_words();   //salvo tutto l'input in una stringa
+	for(int i = 0; i< strlen(input); i++){  // trasformo l'input in lower case
 		input[i] = tolower(input[i]);
 	}
-	char **input_array = split_string(input, &input_len);
+	char **input_array = split_string(input, &input_len);   // dalla stringa di input creo un array di parole da cercare nel dizionario
+	print_not_in_dictionary(input_array, dict, input_len, dict_len);   //confronto i 2 array e stampo le parole non presenti nel dizionario
 
-	print_not_in_dictionary(input_array, dict, input_len, dict_len);
 	return EXIT_SUCCESS;
 }
